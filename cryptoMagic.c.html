@@ -1,0 +1,269 @@
+<html>
+<head>
+<title>cryptoMagic.c</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7ec3e6;}
+.s1 { color: #ebebeb;}
+.s2 { color: #a9b837;}
+.s3 { color: #54b33e;}
+.s4 { color: #ed864a;}
+.s5 { color: #ed864a; font-weight: bold;}
+.s6 { color: #33ccff; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#131314">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+cryptoMagic.c</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * By: Mohammad Riyan Noaman and Ebenzer Oyelade 
+ * Updated: November 18, 2022 
+ * ENGG 1410 Miniproject 1 
+ * Encryption and Decryption 
+ */</span>
+
+
+
+
+<span class="s2">#include </span><span class="s3">&lt;stdio.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&lt;string.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&lt;math.h&gt;</span>
+
+
+<span class="s4">void </span><span class="s1">encrypt()</span><span class="s5">;</span>
+<span class="s4">void </span><span class="s1">decrypt()</span><span class="s5">;</span>
+
+
+<span class="s4">int </span><span class="s1">main() {</span>
+    <span class="s4">char </span><span class="s1">userinput[</span><span class="s6">2</span><span class="s1">]</span><span class="s5">;                      </span><span class="s0">//will store user input &quot;-D&quot; &quot;-d&quot; &quot;-E&quot; &quot;-e&quot;</span>
+
+
+    <span class="s1">printf(</span><span class="s3">&quot;Welcome to cryptoMagic! This program will allow you to encrypt or decrypt an ASCII file.</span><span class="s4">\n</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+
+    <span class="s0">//ask user if they would like to encrypt or decrypt, if task is not specified --&gt; auto encrypt</span>
+    <span class="s1">printf(</span><span class="s3">&quot;Would you like to encrypt or decrypt '-E','-D'</span><span class="s4">\n</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">scanf(</span><span class="s3">&quot;%s&quot;</span><span class="s5">, </span><span class="s1">userinput)</span><span class="s5">;</span>
+    <span class="s4">if</span><span class="s1">(strcmp(userinput</span><span class="s5">, </span><span class="s3">&quot;-D&quot;</span><span class="s1">) == </span><span class="s6">0 </span><span class="s1">|| strcmp(userinput</span><span class="s5">,</span><span class="s3">&quot;-d&quot;</span><span class="s1">) == </span><span class="s6">0</span><span class="s1">){</span>
+        <span class="s0">//if the input is equal to -D or -d, call decryption function</span>
+        <span class="s1">printf(</span><span class="s3">&quot;Decryption selected...&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">decrypt()</span><span class="s5">;</span>
+    <span class="s1">} </span><span class="s4">else if</span><span class="s1">(strcmp(userinput</span><span class="s5">,</span><span class="s3">&quot;-E&quot;</span><span class="s1">) == </span><span class="s6">0 </span><span class="s1">|| strcmp(userinput</span><span class="s5">, </span><span class="s3">&quot;-e&quot;</span><span class="s1">) == </span><span class="s6">0</span><span class="s1">){</span>
+        <span class="s0">//if the input is equal to -E or -e, call encryption function</span>
+        <span class="s1">printf(</span><span class="s3">&quot;Encryption selected...&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">encrypt()</span><span class="s5">;</span>
+    <span class="s1">} </span><span class="s4">else</span><span class="s1">{</span>
+        <span class="s0">//if neither parameter is specified, call encryption function</span>
+        <span class="s1">printf(</span><span class="s3">&quot;Task not specified, file will be encrypted...&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">encrypt()</span><span class="s5">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s4">return </span><span class="s6">0</span><span class="s5">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//function for renaming files</span>
+<span class="s4">char </span><span class="s1">*streplace(</span><span class="s4">char </span><span class="s1">*dest</span><span class="s5">, </span><span class="s4">const char </span><span class="s1">*str1</span><span class="s5">, </span><span class="s4">const char </span><span class="s1">*str2</span><span class="s5">, </span><span class="s4">const char </span><span class="s1">*str3) {</span>
+    <span class="s1">size_t i = </span><span class="s6">0</span><span class="s5">, </span><span class="s1">j</span><span class="s5">, </span><span class="s1">k = </span><span class="s6">0</span><span class="s5">;</span>
+
+    <span class="s0">// replacing substring `str2` with `str3`, assuming sufficient space</span>
+    <span class="s4">while </span><span class="s1">(str1[i] != </span><span class="s3">'</span><span class="s4">\0</span><span class="s3">'</span><span class="s1">) {</span>
+        <span class="s4">for </span><span class="s1">(j = </span><span class="s6">0</span><span class="s5">; </span><span class="s1">str2[j] != </span><span class="s3">'</span><span class="s4">\0</span><span class="s3">'</span><span class="s5">; </span><span class="s1">j++) {</span>
+            <span class="s4">if </span><span class="s1">(str1[i + j] != str2[j]) {</span>
+                <span class="s4">break</span><span class="s5">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s4">if </span><span class="s1">(str2[j] == </span><span class="s3">'</span><span class="s4">\0</span><span class="s3">' </span><span class="s1">&amp;&amp; j &gt; </span><span class="s6">0</span><span class="s1">) {</span>
+            <span class="s0">// we have a match: copy the replacement and skip it</span>
+            <span class="s1">i += j</span><span class="s5">;</span>
+            <span class="s4">for </span><span class="s1">(j = </span><span class="s6">0</span><span class="s5">; </span><span class="s1">str3[j] != </span><span class="s3">'</span><span class="s4">\0</span><span class="s3">'</span><span class="s5">; </span><span class="s1">j++) {</span>
+                <span class="s1">dest[k++] = str3[j]</span><span class="s5">;</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s0">// copy the byte and skip it.</span>
+            <span class="s1">dest[k++] = str1[i++]</span><span class="s5">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s1">dest[k] = </span><span class="s3">'</span><span class="s4">\0</span><span class="s3">'</span><span class="s5">;  </span><span class="s0">// null terminate the destination</span>
+    <span class="s4">return </span><span class="s1">dest</span><span class="s5">;</span>
+<span class="s1">}</span>
+
+<span class="s4">void </span><span class="s1">encrypt(){</span>
+    <span class="s0">//file read/file open</span>
+
+    <span class="s1">FILE *ptr</span><span class="s5">;                                        </span><span class="s0">//create file pointer for reading</span>
+
+    <span class="s1">FILE *ptrW</span><span class="s5">;                                       </span><span class="s0">//create file pointer for writing</span>
+
+    <span class="s4">char </span><span class="s1">readFile[</span><span class="s6">255</span><span class="s1">]</span><span class="s5">;                              </span><span class="s0">//variable to hold file name (maximum 255 characters)</span>
+    <span class="s4">char </span><span class="s1">outFile[</span><span class="s6">255</span><span class="s1">]</span><span class="s5">;                               </span><span class="s0">//variable for output file</span>
+    <span class="s4">int </span><span class="s1">fileVal</span><span class="s5">;                                     </span><span class="s0">//variable to store file character values</span>
+
+    <span class="s4">int </span><span class="s1">loop = </span><span class="s6">1</span><span class="s5">;                                     </span><span class="s0">//boolean for while loop used for reading the file values</span>
+
+
+    <span class="s0">//ask user for file name</span>
+    <span class="s1">printf(</span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">Please enter the file name</span><span class="s4">\n</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">scanf(</span><span class="s3">&quot;%s&quot;</span><span class="s5">, </span><span class="s1">readFile)</span><span class="s5">;                      </span><span class="s0">//store user input as file name</span>
+
+    <span class="s0">//read file extension, change to .crp</span>
+    <span class="s4">if</span><span class="s1">(!strstr(readFile</span><span class="s5">, </span><span class="s3">&quot;.txt&quot;</span><span class="s1">)){</span>
+        <span class="s1">strcat(readFile</span><span class="s5">, </span><span class="s3">&quot;.txt&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">streplace(outFile</span><span class="s5">, </span><span class="s1">readFile</span><span class="s5">, </span><span class="s3">&quot;txt&quot;</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span><span class="s4">else</span>
+    <span class="s1">{</span>
+        <span class="s1">streplace(outFile</span><span class="s5">, </span><span class="s1">readFile</span><span class="s5">, </span><span class="s3">&quot;txt&quot;</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">ptr = fopen(readFile</span><span class="s5">, </span><span class="s3">&quot;r&quot;</span><span class="s1">)</span><span class="s5">;           </span><span class="s0">//open file with pointer</span>
+
+    <span class="s1">ptrW = fopen(outFile</span><span class="s5">, </span><span class="s3">&quot;w&quot;</span><span class="s1">)</span><span class="s5">;</span>
+
+    <span class="s0">//check to see if the file has a value</span>
+    <span class="s4">if </span><span class="s1">(ptr == NULL) {</span>
+        <span class="s1">printf(</span><span class="s3">&quot;Invalid File Name&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span><span class="s4">else </span><span class="s1">{</span>
+        <span class="s0">//create while loop to read file and print character by character</span>
+        <span class="s4">while </span><span class="s1">(loop == </span><span class="s6">1</span><span class="s1">) {</span>
+
+
+            <span class="s1">fileVal = fgetc(ptr)</span><span class="s5">;                           </span><span class="s0">//store each character read from the file withain the variable</span>
+
+
+            <span class="s0">//check to see if file has ended</span>
+            <span class="s4">if </span><span class="s1">(feof(ptr)) {</span>
+                <span class="s1">loop = </span><span class="s6">0</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else if</span><span class="s1">(fileVal == </span><span class="s6">9</span><span class="s1">){</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;TT&quot;</span><span class="s1">)</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else if</span><span class="s1">(fileVal == </span><span class="s6">32</span><span class="s1">){</span>
+                <span class="s0">//if there is a space, print the hex value of the character (prevents encryption bug)</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%x&quot;</span><span class="s5">, </span><span class="s1">fileVal)</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else if</span><span class="s1">(fileVal== </span><span class="s6">10</span><span class="s1">) {</span>
+                <span class="s0">//if there is a line break (&lt;CR&gt;) do not encrypt</span>
+                <span class="s0">//creates a new line</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%c&quot;</span><span class="s5">, </span><span class="s6">13</span><span class="s1">)</span><span class="s5">;</span>
+            <span class="s1">}</span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s0">//encryption: subtract by 16</span>
+                <span class="s1">fileVal = fileVal - </span><span class="s6">16</span><span class="s5">;</span>
+                <span class="s4">if</span><span class="s1">(fileVal &lt; </span><span class="s6">32</span><span class="s1">){</span>
+                    <span class="s1">fileVal = (fileVal - </span><span class="s6">32</span><span class="s1">)+</span><span class="s6">144</span><span class="s5">;</span>
+                    <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%x&quot;</span><span class="s5">, </span><span class="s1">fileVal)</span><span class="s5">;</span>
+                <span class="s1">} </span><span class="s4">else</span><span class="s1">{</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">,</span><span class="s3">&quot;%x&quot;</span><span class="s5">, </span><span class="s1">fileVal)</span><span class="s5">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+
+    <span class="s1">}</span>
+    <span class="s1">fclose(ptr)</span><span class="s5">;                                            </span><span class="s0">//close file</span>
+    <span class="s1">fclose(ptrW)</span><span class="s5">;</span>
+
+    <span class="s1">printf(</span><span class="s3">&quot;</span><span class="s4">\n\n</span><span class="s3">Encryption Completed...&quot;</span><span class="s1">)</span><span class="s5">;</span>
+<span class="s1">}</span>
+
+
+<span class="s4">void </span><span class="s1">decrypt(){</span>
+
+    <span class="s1">FILE *ptrR</span><span class="s5">,</span><span class="s1">*ptrW</span><span class="s5">;                                           </span><span class="s0">//read and write pointers</span>
+    <span class="s4">int </span><span class="s1">loop = </span><span class="s6">1</span><span class="s5">;                                               </span><span class="s0">//boolean for while loop</span>
+    <span class="s4">int </span><span class="s1">first</span><span class="s5">, </span><span class="s1">second</span><span class="s5">;                                          </span><span class="s0">//used for calculating first and second hex values</span>
+    <span class="s4">int </span><span class="s1">ascii_val</span><span class="s5">;                                              </span><span class="s0">//used for holding the ascii value of the two hex values combined</span>
+    <span class="s4">char </span><span class="s1">readFile[</span><span class="s6">255</span><span class="s1">]</span><span class="s5">;                                         </span><span class="s0">//variable to hold file name (maximum 255 characters)</span>
+    <span class="s4">char </span><span class="s1">outFile[</span><span class="s6">255</span><span class="s1">]</span><span class="s5">;                                          </span><span class="s0">//variable for output file</span>
+
+
+    <span class="s0">//ask user for file name</span>
+    <span class="s1">printf(</span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">Please enter the file name</span><span class="s4">\n</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">scanf(</span><span class="s3">&quot;%s&quot;</span><span class="s5">, </span><span class="s1">readFile)</span><span class="s5">;                      </span><span class="s0">//store user input as file name</span>
+
+    <span class="s0">//change files from .crp to .txt</span>
+    <span class="s4">if</span><span class="s1">(!strstr(readFile</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s1">)){</span>
+        <span class="s1">strcat(readFile</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">streplace(outFile</span><span class="s5">, </span><span class="s1">readFile</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s5">, </span><span class="s3">&quot;txt&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span><span class="s4">else</span>
+    <span class="s1">{</span>
+        <span class="s1">streplace(outFile</span><span class="s5">, </span><span class="s1">readFile</span><span class="s5">, </span><span class="s3">&quot;crp&quot;</span><span class="s5">, </span><span class="s3">&quot;txt&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">ptrR = fopen(readFile</span><span class="s5">, </span><span class="s3">&quot;r&quot;</span><span class="s1">)</span><span class="s5">;           </span><span class="s0">//open file with pointer</span>
+
+    <span class="s1">ptrW = fopen(outFile</span><span class="s5">, </span><span class="s3">&quot;w&quot;</span><span class="s1">)</span><span class="s5">;</span>
+
+
+    <span class="s0">//check to see if the file has a value</span>
+    <span class="s4">if </span><span class="s1">(ptrR == NULL) {</span>
+        <span class="s1">printf(</span><span class="s3">&quot;Invalid File Name&quot;</span><span class="s1">)</span><span class="s5">;</span>
+    <span class="s1">}</span><span class="s4">else</span><span class="s1">{</span>
+    <span class="s4">while </span><span class="s1">(loop == </span><span class="s6">1</span><span class="s1">){</span>
+
+        <span class="s0">//read first hex value</span>
+        <span class="s1">first = fgetc(ptrR)</span><span class="s5">;</span>
+
+        <span class="s0">//check to see for a new li</span>
+        <span class="s4">if</span><span class="s1">(first == </span><span class="s6">13</span><span class="s1">){</span>
+            <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+        <span class="s1">}</span><span class="s4">else </span><span class="s1">{</span>
+
+            <span class="s0">//make sure file value is not null</span>
+            <span class="s4">if </span><span class="s1">(feof(ptrR)) {</span>
+                <span class="s1">loop = </span><span class="s6">0</span><span class="s5">;                       </span><span class="s0">//break the loop</span>
+            <span class="s1">}</span>
+
+
+            <span class="s0">//if the ASCII value is greater than 65, subtract with 87. Otherwise, subtract with 48</span>
+            <span class="s4">if </span><span class="s1">(first &gt;= </span><span class="s6">65</span><span class="s1">) {</span>
+                <span class="s1">first = first - </span><span class="s6">87</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">first = first - </span><span class="s6">48</span><span class="s5">;</span>
+            <span class="s1">}</span>
+            <span class="s1">first = first * </span><span class="s6">16</span><span class="s5">;</span>
+
+            <span class="s0">//read the second value</span>
+
+            <span class="s1">second = fgetc(ptrR)</span><span class="s5">;</span>
+
+
+            <span class="s0">//check value of the character to decide what operator is necessary</span>
+            <span class="s4">if </span><span class="s1">(second &gt;= </span><span class="s6">65</span><span class="s1">) {</span>
+                <span class="s1">second = second - </span><span class="s6">87</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">second = second - </span><span class="s6">48</span><span class="s5">;</span>
+            <span class="s1">}</span>
+
+            <span class="s0">//add first and second values together to get the ascii value for the first character</span>
+            <span class="s0">//include decryption formula within the sum as well (+4/2)</span>
+            <span class="s1">ascii_val = ((first + second) + </span><span class="s6">16</span><span class="s1">)</span><span class="s5">;</span>
+
+
+            <span class="s0">//if value is greater than ascii values, subtract to convert back to alphabet</span>
+            <span class="s4">if </span><span class="s1">(ascii_val &gt; </span><span class="s6">127</span><span class="s1">) {</span>
+                <span class="s1">ascii_val = (ascii_val - </span><span class="s6">144</span><span class="s1">) + </span><span class="s6">32</span><span class="s5">;</span>
+            <span class="s1">}</span>
+
+            <span class="s4">if </span><span class="s1">(ascii_val == -</span><span class="s6">817</span><span class="s1">) {</span>
+                <span class="s0">//for end of the line</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%c&quot;</span><span class="s5">, </span><span class="s6">00</span><span class="s1">)</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else if </span><span class="s1">(ascii_val == -</span><span class="s6">35</span><span class="s1">) {</span>
+                <span class="s0">//ascii value of TT = -35, convert TT to tab</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;</span><span class="s4">\t</span><span class="s3">&quot;</span><span class="s1">)</span><span class="s5">;</span>
+
+            <span class="s1">} </span><span class="s4">else if </span><span class="s1">(ascii_val == </span><span class="s6">48</span><span class="s1">) {</span>
+                <span class="s0">//account for spaces, ascii value found to be 48 for spaces</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%c&quot;</span><span class="s5">, </span><span class="s6">32</span><span class="s1">)</span><span class="s5">;</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">fprintf(ptrW</span><span class="s5">, </span><span class="s3">&quot;%c&quot;</span><span class="s5">, </span><span class="s1">ascii_val)</span><span class="s5">;</span>
+            <span class="s1">}</span>
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s1">fclose(ptrR)</span><span class="s5">;</span>
+    <span class="s1">fclose(ptrW)</span><span class="s5">;</span>
+
+    <span class="s1">printf(</span><span class="s3">&quot;</span><span class="s4">\n</span><span class="s3">Decryption complete...&quot;</span><span class="s1">)</span><span class="s5">;</span>
+
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

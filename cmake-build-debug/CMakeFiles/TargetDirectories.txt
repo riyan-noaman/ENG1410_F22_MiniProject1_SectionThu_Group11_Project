@@ -1,0 +1,3 @@
+C:/Users/riyan/CLionProjects/cryptoMagic/cmake-build-debug/CMakeFiles/cryptoMagic.dir
+C:/Users/riyan/CLionProjects/cryptoMagic/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/riyan/CLionProjects/cryptoMagic/cmake-build-debug/CMakeFiles/rebuild_cache.dir
